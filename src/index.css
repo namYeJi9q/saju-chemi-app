@@ -1,0 +1,78 @@
+:root {
+  --page: #10142a;
+  --night: #161b33;
+  --surface: #1b2140;
+  --line: rgba(238, 232, 216, 0.14);
+  --line-strong: rgba(238, 232, 216, 0.32);
+  --star: #eee8d8;
+  --star-dim: #a3a8c3;
+  --gold: #e2b54a;
+  --focus: #8ea2da;
+  --error: #f0a38f;
+
+  --serif: 'Song Myung', 'Noto Serif KR', serif;
+  --sans: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+
+  color-scheme: dark;
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--star);
+  background: var(--page);
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  min-height: 100vh;
+  background: var(--page);
+}
+
+h1,
+h2,
+h3,
+p,
+ul,
+dl,
+dd {
+  margin: 0;
+}
+
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
