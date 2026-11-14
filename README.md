@@ -1,5 +1,10 @@
 # 우리 사이 관계도 (Saju Chemi)
 
+🔗 **https://saju-chemi-app.vercel.app**
+
+바로 써 보기: 위 주소에서 "예시 멤버 불러오기"를 누르면 관계도가 그려져요.\
+Try it now: open the link above and press "예시 멤버 불러오기" (load sample members) to see a graph.
+
 여러 사람의 생년월일을 넣으면 일주(日柱)를 바탕으로 서로의 관계를 별자리처럼 그려 주는 웹앱이에요.\
 Enter several people's birth dates and it draws how they relate as a constellation, based on each person's day pillar (日柱).
 
