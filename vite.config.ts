@@ -20,7 +20,11 @@ function siteUrl(): string {
 function injectSiteUrl(): Plugin {
   return {
     name: 'inject-site-url',
-    transformIndexHtml: (html) => html.replaceAll('__SITE_URL__', siteUrl()),
+    // Vite가 meta 태그의 주소를 손대기 전에(pre) 바꿔야 앞에 '/'가 붙지 않는다
+    transformIndexHtml: {
+      order: 'pre',
+      handler: (html) => html.replaceAll('__SITE_URL__', siteUrl()),
+    },
   }
 }
 
