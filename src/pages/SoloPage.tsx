@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import CreateSharedGraph from '../components/CreateSharedGraph'
 import GraphView from '../components/GraphView'
 import PeopleEditor, { MAX_PEOPLE } from '../components/PeopleEditor'
 import { toMembers } from '../lib/members'
@@ -35,6 +36,8 @@ export default function SoloPage() {
         <h1>우리 사이 관계도</h1>
         <p className="lede">생년월일을 넣으면 일주(日柱)를 바탕으로 서로의 기운이 어떻게 흐르는지 별자리처럼 그려 줘요.</p>
       </header>
+
+      <CreateSharedGraph />
 
       <main className={members.length >= 2 ? 'layout has-graph' : 'layout'}>
         <section className="col-members" aria-labelledby="members-heading">
