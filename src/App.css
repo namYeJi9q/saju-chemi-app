@@ -25,6 +25,83 @@
   line-height: 1.7;
 }
 
+/* 공유 화면: 혼자 쓰기 화면으로 돌아가는 작은 길잡이 */
+.crumb {
+  display: inline-block;
+  margin-bottom: 14px;
+  color: var(--star-dim);
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.crumb:hover {
+  color: var(--star);
+}
+
+.code {
+  font-family: var(--serif);
+  color: var(--star);
+  letter-spacing: 0.04em;
+}
+
+/* 개발 단계 안내(서버 연결 전). 4단계에서 사라진다 */
+.notice {
+  margin: -16px 0 32px;
+  padding: 10px 14px;
+  border: 1px dashed var(--line-strong);
+  border-radius: 8px;
+  color: var(--star-dim);
+  font-size: 14px;
+}
+
+/* ── 공유 화면 멤버 목록 ───────────── */
+.section-count {
+  color: var(--star-dim);
+  font-size: 14px;
+}
+
+.member-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  border-bottom: 1px solid var(--line);
+}
+
+.member-name {
+  flex: 1;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.member-pillar {
+  font-family: var(--serif);
+  font-size: 17px;
+}
+
+/* ── 없는 주소 ─────────────────────── */
+.not-found {
+  max-width: 34em;
+  padding: 12vh 0;
+}
+
+.not-found h1 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 34px;
+  line-height: 1.25;
+  margin-bottom: 14px;
+}
+
+.not-found .lede {
+  margin-bottom: 20px;
+}
+
+.not-found .text-btn {
+  color: var(--star);
+  font-size: 15px;
+}
+
 /* ── 배치 ───────────────────────────── */
 .layout {
   display: grid;
