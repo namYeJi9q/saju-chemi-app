@@ -42,7 +42,10 @@ export default function MemberForm({ onSubmit, mode = 'add', initial, onCancel }
     try {
       await onSubmit(checked.value)
       if (!editing) {
-        setMessage({ kind: 'done', text: `${checked.value.name} 님을 관계도에 띄웠어요.` })
+        setMessage({
+          kind: 'done',
+          text: `${checked.value.name} 님을 관계도에 띄웠어요. 링크를 단톡방에 올려 친구들도 불러 보세요.`,
+        })
         setInput(EMPTY)
         nameRef.current?.focus()
       }
@@ -54,7 +57,12 @@ export default function MemberForm({ onSubmit, mode = 'add', initial, onCancel }
   }
 
   return (
-    <form className={editing ? 'member-form is-edit' : 'member-form'} onSubmit={submit} noValidate>
+    <form
+      id={editing ? undefined : 'member-form'}
+      className={editing ? 'member-form is-edit' : 'member-form'}
+      onSubmit={submit}
+      noValidate
+    >
       {!editing && (
         <>
           <h3>관계도에 추가하기</h3>
@@ -66,6 +74,7 @@ export default function MemberForm({ onSubmit, mode = 'add', initial, onCancel }
         <div className="person-head">
           <input
             ref={nameRef}
+            id={editing ? undefined : 'member-form-name'}
             className="name-input"
             type="text"
             value={input.name}

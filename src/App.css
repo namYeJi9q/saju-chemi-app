@@ -100,6 +100,32 @@
   cursor: default;
 }
 
+.btn-secondary {
+  min-height: 44px;
+  padding: 0 20px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--star);
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+.btn-secondary:hover {
+  border-color: var(--star);
+}
+
+.copy-link-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+}
+
+.member-form {
+  scroll-margin-top: 16px;
+}
+
 .share-start {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);

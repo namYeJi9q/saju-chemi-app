@@ -88,8 +88,16 @@ export default function SharedPage({ code }: Props) {
           우리 사이 관계도
         </AppLink>
         <h1>{graph.name}</h1>
-        <p className="lede">링크를 받은 친구들이 직접 들어와 채우는 관계도예요. 누가 추가하면 모두의 화면에 바로 떠요.</p>
+        <p className="lede">
+          생일만 넣으면 서로 어떤 기운을 주고받는 사이인지 별자리로 그려 줘요. 링크를 받은 사람 누구나 추가할 수 있고,
+          추가하면 모두의 화면에 바로 떠요.
+        </p>
         <div className="share-actions">
+          {!full && (
+            <button type="button" className="btn-primary" onClick={jumpToForm}>
+              나도 추가하기
+            </button>
+          )}
           <CopyLinkButton code={graph.code} />
           {isOwner && <span className="owner-badge">내가 만든 관계도</span>}
         </div>
@@ -145,6 +153,15 @@ async function withMessage(run: () => Promise<void>): Promise<void> {
   } catch (err) {
     throw new Error(describeFirebaseError(err), { cause: err })
   }
+}
+
+/** 화면 위 '나도 추가하기' → 추가 폼으로 내려가서 이름 칸에 커서를 둔다(모바일은 폼이 관계도 아래에 있어서) */
+function jumpToForm() {
+  const form = document.getElementById('member-form')
+  if (!form) return
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  form.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' })
+  document.getElementById('member-form-name')?.focus({ preventScroll: true })
 }
 
 function Problem({ title, message }: { title: string; message: string }) {
