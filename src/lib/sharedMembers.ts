@@ -1,11 +1,14 @@
 import {
   addDoc,
   collection,
+  deleteDoc,
+  doc,
   getFirestore,
   onSnapshot,
   orderBy,
   query,
   serverTimestamp,
+  updateDoc,
   type Firestore,
 } from 'firebase/firestore'
 import { getFirebaseApp } from './firebase'
@@ -53,6 +56,15 @@ export function validateMember(input: MemberInput): { ok: true; value: MemberInp
 export async function addSharedMember(code: string, input: MemberInput): Promise<void> {
   const createdBy = await getAnonymousUid()
   await addDoc(membersOf(code), { ...input, createdBy, createdAt: serverTimestamp() })
+}
+
+/** 멤버 정보를 고친다. 추가한 사람(createdBy)은 바꾸지 않는다. 권한은 화면(5단계)과 보안 규칙(6단계)에서 막는다. */
+export async function updateSharedMember(code: string, id: string, input: MemberInput): Promise<void> {
+  await updateDoc(doc(membersOf(code), id), { ...input, updatedAt: serverTimestamp() })
+}
+
+export async function deleteSharedMember(code: string, id: string): Promise<void> {
+  await deleteDoc(doc(membersOf(code), id))
 }
 
 /** 멤버 목록을 실시간으로 받는다. 누가 추가하면 열려 있는 모든 화면에 바로 들어온다. */

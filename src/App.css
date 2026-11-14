@@ -207,11 +207,63 @@
 }
 
 .member-list li {
+  padding: 4px 0 8px;
+  border-bottom: 1px solid var(--line);
+}
+
+.member-row {
   display: flex;
   align-items: center;
   gap: 10px;
-  min-height: 48px;
-  border-bottom: 1px solid var(--line);
+  min-height: 40px;
+}
+
+.member-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 14px;
+  padding-left: 20px;
+  font-size: 13px;
+  color: var(--star-dim);
+}
+
+.member-actions .text-btn {
+  min-height: 32px;
+}
+
+.member-actions.is-confirm span {
+  width: 100%;
+  color: var(--star);
+}
+
+.text-btn.danger {
+  color: var(--error);
+  text-decoration-color: var(--error);
+}
+
+.owner-note {
+  color: var(--gold);
+  font-size: 12px;
+}
+
+.member-list li .error {
+  max-width: none;
+  margin: 6px 0 0 20px;
+}
+
+.member-list li.is-editing {
+  padding: 0;
+}
+
+.member-form.is-edit {
+  margin: 0;
+}
+
+.member-form-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 
 .member-name {

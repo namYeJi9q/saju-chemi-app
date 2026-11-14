@@ -5,17 +5,22 @@ import { MEMBER_NAME_MAX, validateMember, type MemberInput } from '../lib/shared
 
 interface Props {
   onSubmit: (input: MemberInput) => Promise<void>
+  /** 'edit'이면 미리 채운 값으로 고치기 화면이 된다 */
+  mode?: 'add' | 'edit'
+  initial?: MemberInput
+  onCancel?: () => void
 }
 
 const today = new Date().toISOString().slice(0, 10)
 const EMPTY: MemberInput = { name: '', birthDate: '', birthTime: null }
 
 /**
- * 공유 관계도에 한 명 추가하는 폼. 혼자 쓰기 화면의 입력 칸 모양을 그대로 쓴다.
- * 본인이 아니어도(엄마, 친구 대신) 넣을 수 있다.
+ * 공유 관계도의 멤버 입력 폼. 혼자 쓰기 화면의 입력 칸 모양을 그대로 쓴다.
+ * 추가할 때는 본인이 아니어도(엄마, 친구 대신) 넣을 수 있다.
  */
-export default function MemberForm({ onSubmit }: Props) {
-  const [input, setInput] = useState<MemberInput>(EMPTY)
+export default function MemberForm({ onSubmit, mode = 'add', initial, onCancel }: Props) {
+  const editing = mode === 'edit'
+  const [input, setInput] = useState<MemberInput>(initial ?? EMPTY)
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState<{ kind: 'error' | 'done'; text: string } | null>(null)
   const nameRef = useRef<HTMLInputElement>(null)
@@ -36,20 +41,26 @@ export default function MemberForm({ onSubmit }: Props) {
     setMessage(null)
     try {
       await onSubmit(checked.value)
-      setMessage({ kind: 'done', text: `${checked.value.name} 님을 관계도에 띄웠어요.` })
-      setInput(EMPTY)
-      nameRef.current?.focus()
+      if (!editing) {
+        setMessage({ kind: 'done', text: `${checked.value.name} 님을 관계도에 띄웠어요.` })
+        setInput(EMPTY)
+        nameRef.current?.focus()
+      }
     } catch (err) {
-      setMessage({ kind: 'error', text: err instanceof Error ? err.message : '추가하지 못했어요.' })
+      setMessage({ kind: 'error', text: err instanceof Error ? err.message : '저장하지 못했어요.' })
     } finally {
       setBusy(false)
     }
   }
 
   return (
-    <form className="member-form" onSubmit={submit} noValidate>
-      <h3>관계도에 추가하기</h3>
-      <p className="member-form-hint">나도, 엄마나 친구도 대신 넣을 수 있어요. 생년월일은 다른 사람에게 보이지 않아요.</p>
+    <form className={editing ? 'member-form is-edit' : 'member-form'} onSubmit={submit} noValidate>
+      {!editing && (
+        <>
+          <h3>관계도에 추가하기</h3>
+          <p className="member-form-hint">나도, 엄마나 친구도 대신 넣을 수 있어요. 생년월일은 다른 사람에게 보이지 않아요.</p>
+        </>
+      )}
 
       <div className="person">
         <div className="person-head">
@@ -60,7 +71,8 @@ export default function MemberForm({ onSubmit }: Props) {
             value={input.name}
             maxLength={MEMBER_NAME_MAX}
             placeholder="이름"
-            aria-label="추가할 사람 이름"
+            aria-label={editing ? '이름 고치기' : '추가할 사람 이름'}
+            autoFocus={editing}
             onChange={(e) => setInput({ ...input, name: e.target.value })}
           />
           {chart && col && stem && (
@@ -104,9 +116,16 @@ export default function MemberForm({ onSubmit }: Props) {
         </div>
       </div>
 
-      <button type="submit" className="btn-primary member-form-submit" disabled={busy}>
-        {busy ? '띄우는 중…' : '관계도에 띄우기'}
-      </button>
+      <div className="member-form-actions">
+        <button type="submit" className="btn-primary member-form-submit" disabled={busy}>
+          {editing ? (busy ? '저장하는 중…' : '저장') : busy ? '띄우는 중…' : '관계도에 띄우기'}
+        </button>
+        {editing && onCancel && (
+          <button type="button" className="text-btn" onClick={onCancel} disabled={busy}>
+            취소
+          </button>
+        )}
+      </div>
       {message && (
         <p className={message.kind === 'error' ? 'error' : 'hint'} role={message.kind === 'error' ? 'alert' : 'status'}>
           {message.text}

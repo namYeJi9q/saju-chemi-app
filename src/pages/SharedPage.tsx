@@ -3,12 +3,17 @@ import AppLink from '../components/AppLink'
 import CopyLinkButton from '../components/CopyLinkButton'
 import GraphView from '../components/GraphView'
 import MemberForm from '../components/MemberForm'
+import SharedMemberList from '../components/SharedMemberList'
 import { toMembers } from '../lib/members'
 import { buildRelations } from '../lib/relations'
-import { STEMS } from '../lib/saju'
 import { describeFirebaseError } from '../lib/auth'
-import { MAX_SHARED_MEMBERS, addSharedMember, type MemberInput } from '../lib/sharedMembers'
-import { ELEMENT_COLOR } from '../lib/theme'
+import {
+  MAX_SHARED_MEMBERS,
+  addSharedMember,
+  deleteSharedMember,
+  updateSharedMember,
+  type MemberInput,
+} from '../lib/sharedMembers'
 import { useAnonymousUser } from '../lib/useAnonymousUser'
 import { useSharedGraph } from '../lib/useSharedGraph'
 import { useSharedMembers } from '../lib/useSharedMembers'
@@ -20,6 +25,7 @@ interface Props {
 /**
  * 공유 관계도 화면.
  * 4단계: 링크로 들어온 누구나 멤버를 추가하고, 열려 있는 모든 화면에 실시간으로 반영된다.
+ * 5단계: 내가 추가한 멤버는 수정·삭제, 방장은 모든 멤버 삭제(화면 기준).
  */
 export default function SharedPage({ code }: Props) {
   const user = useAnonymousUser()
@@ -30,23 +36,23 @@ export default function SharedPage({ code }: Props) {
   const shared = useMemo(() => (membersState.status === 'ready' ? membersState.members : []), [membersState])
   const members = useMemo(() => toMembers(shared), [shared])
   const relations = useMemo(() => buildRelations(members), [members])
-  const addedBy = useMemo(() => new Map(shared.map((m) => [m.id, m.createdBy])), [shared])
+  const sharedById = useMemo(() => new Map(shared.map((m) => [m.id, m])), [shared])
 
   const graphName = graphState.status === 'ready' ? graphState.graph.name : null
   useEffect(() => {
     document.title = graphName ? `${graphName} | 우리 사이 관계도` : '공유 관계도 | 우리 사이 관계도'
   }, [graphName])
 
+  // 서버 오류는 사람이 읽을 문장으로 바꿔서 폼·목록에 보여 준다
   const add = useCallback(
-    async (input: MemberInput) => {
-      try {
-        await addSharedMember(code, input)
-      } catch (err) {
-        throw new Error(describeFirebaseError(err), { cause: err })
-      }
-    },
+    (input: MemberInput) => withMessage(() => addSharedMember(code, input)),
     [code],
   )
+  const update = useCallback(
+    (id: string, input: MemberInput) => withMessage(() => updateSharedMember(code, id, input)),
+    [code],
+  )
+  const remove = useCallback((id: string) => withMessage(() => deleteSharedMember(code, id)), [code])
 
   const problem =
     user.status === 'error'
@@ -99,20 +105,14 @@ export default function SharedPage({ code }: Props) {
           </div>
 
           {members.length > 0 ? (
-            <ul className="member-list" aria-live="polite">
-              {members.map((m) => {
-                const col = ELEMENT_COLOR[STEMS[m.chart.dayStem].element]
-                const mine = addedBy.get(m.person.id) === uid
-                return (
-                  <li key={m.person.id}>
-                    <span className="dot" style={{ background: col.fill, borderColor: col.ring }} aria-hidden="true" />
-                    <span className="member-name">{m.person.name}</span>
-                    {mine && <span className="mine-tag">내가 추가</span>}
-                    <span className="member-pillar">{m.chart.day}</span>
-                  </li>
-                )
-              })}
-            </ul>
+            <SharedMemberList
+              members={members}
+              sharedById={sharedById}
+              uid={uid}
+              isOwner={isOwner}
+              onUpdate={update}
+              onDelete={remove}
+            />
           ) : (
             <p className="member-empty">아직 아무도 없어요. 첫 번째 별을 띄워 주세요.</p>
           )}
@@ -137,6 +137,14 @@ export default function SharedPage({ code }: Props) {
       </footer>
     </>
   )
+}
+
+async function withMessage(run: () => Promise<void>): Promise<void> {
+  try {
+    await run()
+  } catch (err) {
+    throw new Error(describeFirebaseError(err), { cause: err })
+  }
 }
 
 function Problem({ title, message }: { title: string; message: string }) {
