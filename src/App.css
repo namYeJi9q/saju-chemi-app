@@ -54,6 +54,18 @@
   font-size: 14px;
 }
 
+.notice.is-error {
+  border-style: solid;
+  border-color: var(--error);
+  color: var(--error);
+}
+
+.loading {
+  padding: 12vh 0;
+  color: var(--star-dim);
+  font-size: 15px;
+}
+
 /* ── 공유 화면 멤버 목록 ───────────── */
 .section-count {
   color: var(--star-dim);

@@ -6,16 +6,25 @@ import { buildRelations } from '../lib/relations'
 import { STEMS } from '../lib/saju'
 import { SAMPLE_PEOPLE } from '../lib/storage'
 import { ELEMENT_COLOR } from '../lib/theme'
+import { useAnonymousUser, type AnonymousUser } from '../lib/useAnonymousUser'
 
 interface Props {
   code: string
 }
 
+/** 개발 확인용 연결 상태 안내. 4단계에서 실제 멤버가 붙으면 없앤다. */
+function connectionNotice(user: AnonymousUser): string {
+  if (user.status === 'loading') return '서버에 연결하는 중이에요…'
+  if (user.status === 'error') return user.message
+  return `서버에 연결됐어요. 이 브라우저의 번호표는 ${user.uid.slice(0, 6)}…로 시작해요. 멤버는 아직 예시예요.`
+}
+
 /**
  * 공유 관계도 화면.
- * 1단계: 서버 연결 전이라 예시 멤버로 화면 길만 확인한다. (4단계에서 실제 멤버로 바뀜)
+ * 2단계: 들어오면 익명 로그인으로 번호표를 받는다. 멤버는 아직 예시. (4단계에서 실제 멤버로 바뀜)
  */
 export default function SharedPage({ code }: Props) {
+  const user = useAnonymousUser()
   const members = useMemo(() => toMembers(SAMPLE_PEOPLE.map((p, i) => ({ ...p, id: `sample-${i}` }))), [])
   const relations = useMemo(() => buildRelations(members), [members])
 
@@ -35,8 +44,8 @@ export default function SharedPage({ code }: Props) {
         </p>
       </header>
 
-      <p className="notice" role="status">
-        아직 서버에 연결하기 전이라 예시 멤버로 보여 줘요.
+      <p className={user.status === 'error' ? 'notice is-error' : 'notice'} role="status" data-auth={user.status}>
+        {connectionNotice(user)}
       </p>
 
       <main className="layout has-graph">
